@@ -1,5 +1,7 @@
 const vscode = require('vscode');
 const puppeteer=require('puppeteer');
+const CFWebView=require('./Functions/HTMLForWebView')
+
 
 let currentPanel=vscode.WebviewPanel;
 let extensionTerminal=null;
@@ -9,7 +11,7 @@ let url;
  */
 function activate(context) {
 
-	console.log('Congratulations, your extension "codeforces-extension" is now active!');
+	console.log('Congratulations, your extension "check" is now active!');
 
 	let showCodeForceProblemInWebview = vscode.commands.registerCommand('codeforces-extension.showWebview',async () => {
 		
@@ -38,10 +40,17 @@ function activate(context) {
 				vscode.ViewColumn.Two, 
 				{
 					enableScripts: true,
+					//localResourceRoots: [vscode.Uri.joinPath(context.extensionPath,'Functions','WebView')],
 				}
 			);
 		
-			makeWebView(url)
+			// const onDiskScriptPath=vscode.Uri.joinPath(context.extensionPath,'Functions','WebView','script.js');
+			// const scriptSrc=currentPanel.webview.asWebviewUri(onDiskScriptPath)
+
+			// const onDiskStylePath=vscode.Uri.joinPath(context.extensionPath,'Functions','WebView','style.css');
+			// const styleSrc=currentPanel.webview.asWebviewUri(onDiskStylePath)
+
+			CFWebView.makeWebView(url)
 			.then(response=>currentPanel.webview.html=response);
 		}
 
@@ -89,93 +98,6 @@ function activate(context) {
 	
 	
 }
-
-
-/* *********************************x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x*************************************************************** */
-
-async function fetchProblemStatement(url) {
-	const browser = await puppeteer.launch();
-	const page = await browser.newPage();
-	await page.goto(url);
-  
-	await page.waitForSelector('.problem-statement');
-  
-	const problemStatementElement = await page.$('.problem-statement');
-	const problemStatementHtml = await page.evaluate(el => el.innerHTML, problemStatementElement);
-  
-	await browser.close();
-  
-	console.log(problemStatementHtml);
-	return problemStatementHtml;
-  
-}	  
-
-  const makeWebView=async (url)=>{
-
-	let data=await fetchProblemStatement(url);
-
-	// const scriptPathOnDisk=vscode.Uri.joinPath(vscode.ExtensionContext.extensionUri,'media','script.js');
-	// const scriptUri=vscode.Webview.asWebviewUri(scriptPathOnDisk);
-
-	// const stylesPathMainPath = vscode.Uri.joinPath(vscode.ExtensionContext.extensionUri, 'media', 'style.css');
-	// const stylesMainUri = vscode.Webview.asWebviewUri(stylesPathMainPath);
-
-	return `<!DOCTYPE html>
-	<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		
-		<link href="" rel="stylesheet">
-		<style>
-		*{
-			font-size:16px;
-		}
-		.header{
-			margin-left:auto;
-			margin-right:auto;
-			text-align:center;
-		}
-		.title{
-			font-size:30px;
-			margin-top:4px;
-			margin-bottom:4px;
-		}
-		.time-limit{
-			font-size:10px;
-			margin-top:4px;
-			margin-bottom:4px;
-		}
-		.memory-limit{
-			font-size:10px;
-			margin-top:4px;
-			margin-bottom:4px;
-		}
-		.input-type{
-			font-size:10px;
-			margin-top:4px;
-			margin-bottom:4px;
-		}
-		.output-type{
-			font-size:10px;
-			margin-top:4px;
-			margin-bottom:4px;
-		}
-		</style>
-		<title>Cat Coding</title>
-	</head>
-		<body>
-			${data}
-			<script defer src=""></script>
-		</body>
-	</html>`
-}
-  
-
-/*******************x-x-x--x-x-x--x-x-x--x-x--x-x--x-x--x-x--x-x--x--x-x--x-x--x************************** */
-
-
-
 
 
 
