@@ -1,7 +1,8 @@
 const vscode = require('vscode');
 const puppeteer=require('puppeteer');
-const CFWebView=require('./Functions/HTMLForWebView')
-
+const createWebViewForProblem=require('./Functions/createWebViewForProbelem');
+const createTerminalForTesting=require('./Functions/createTerminalForTesting');
+const runSampleTests=require('./Functions/runSampleTests')
 
 let currentPanel=vscode.WebviewPanel;
 let extensionTerminal=null;
@@ -11,84 +12,40 @@ let url;
  */
 function activate(context) {
 
-	console.log('Congratulations, your extension "check" is now active!');
+	//console.log('Congratulations, your extension "check" is now active!');
 
 	let showCodeForceProblemInWebview = vscode.commands.registerCommand('codeforces-extension.showWebview',async () => {
-		
-		
-		if(currentPanel)
-		{
-			currentPanel.reveal(vscode.ViewColumn.Two);
-		}
-		else
-		{
-			
-			await vscode.window.showInputBox()
-			.then((data)=>{
-				if(data.length<6)
-				{
-					url=`https://codeforces.com/problemset/problem/${data.substring(0,data.length-1)}/${data.substring(data.length-1)}`
-				}
-				else
-				{
-					url=data;
-				}
-			});
-			currentPanel = vscode.window.createWebviewPanel(
-				'webview', 
-				'Question',
-				vscode.ViewColumn.Two, 
-				{
-					enableScripts: true,
-					//localResourceRoots: [vscode.Uri.joinPath(context.extensionPath,'Functions','WebView')],
-				}
-			);
-		
-			// const onDiskScriptPath=vscode.Uri.joinPath(context.extensionPath,'Functions','WebView','script.js');
-			// const scriptSrc=currentPanel.webview.asWebviewUri(onDiskScriptPath)
-
-			// const onDiskStylePath=vscode.Uri.joinPath(context.extensionPath,'Functions','WebView','style.css');
-			// const styleSrc=currentPanel.webview.asWebviewUri(onDiskStylePath)
-
-			CFWebView.makeWebView(url)
-			.then(response=>currentPanel.webview.html=response);
-		}
-
-		currentPanel.onDidDispose(()=>{
-			currentPanel=null;
-		},null,context.subscriptions);
+		createWebViewForProblem.createWebViewForProblem();
 	});
 
 
 	const runFile=vscode.commands.registerCommand('codeforces-extension.makeTerminal',async ()=>{
-		let shellPath=await getCPlusPlusFileUri();
-		await createTerminalForTesting();
-		
-		extensionTerminal.sendText(`cd ${shellPath}`);
+		createTerminalForTesting.createTerminalForTesting();
 	});
 
 
 	const runSampleTestCases=vscode.commands.registerCommand('codeforces-extension.sampleTests',async ()=>{
 
-		let sampleTestArray=await makeSampleInputArray(url);
-		let shellPath=await getCPlusPlusFileUri();
-		for(let i=0;i<sampleTestArray.length;i++)
-		{
-			extensionTerminal.sendText(`cd ${shellPath} && g++ test.cpp && ./a.out`)
-			console.log(Array.isArray(sampleTestArray[i]))
-			if(Array.isArray(sampleTestArray[i]))
-			{
-				for(let j=0;j<sampleTestArray[i].length;j++)
-				{
-					extensionTerminal.sendText(sampleTestArray[i][j]);
-				}
-			}
-			else
-			{
-				extensionTerminal.sendText(sampleTestArray[i]);
-			}
-			//extensionTerminal.sendText(sampleTestArray[i]);
-		}
+		runSampleTests.runSampleTests();
+		// let sampleTestArray=await makeSampleInputArray(url);
+		// let shellPath=await getCPlusPlusFileUri();
+		// for(let i=0;i<sampleTestArray.length;i++)
+		// {
+		// 	extensionTerminal.sendText(`cd ${shellPath} && g++ test.cpp && ./a.out`)
+		// 	console.log(Array.isArray(sampleTestArray[i]))
+		// 	if(Array.isArray(sampleTestArray[i]))
+		// 	{
+		// 		for(let j=0;j<sampleTestArray[i].length;j++)
+		// 		{
+		// 			extensionTerminal.sendText(sampleTestArray[i][j]);
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		extensionTerminal.sendText(sampleTestArray[i]);
+		// 	}
+		// 	//extensionTerminal.sendText(sampleTestArray[i]);
+		// }
 
 	})
 	
@@ -123,19 +80,19 @@ const checkTerminal=async ()=>{
     return null;
 }
 
-const createTerminalForTesting=async ()=>{
+// const createTerminalForTesting=async ()=>{
 	
 	
-	extensionTerminal=await checkTerminal();
+// 	extensionTerminal=await checkTerminal();
 
-    if(!extensionTerminal)
-    {
+//     if(!extensionTerminal)
+//     {
 		
-        extensionTerminal=await vscode.window.createTerminal('CodeForces-Test');
-    }
+//         extensionTerminal=await vscode.window.createTerminal('CodeForces-Test');
+//     }
     
-    extensionTerminal.show();
-}
+//     extensionTerminal.show();
+// }
 
 async function getCPlusPlusFileUri() {
 	const editor = vscode.window.activeTextEditor;
@@ -143,7 +100,7 @@ async function getCPlusPlusFileUri() {
 
 		let folderPath=await findFolderPath(editor.document.uri.path);
 
-		console.log(folderPath)
+		//console.log(folderPath)
 		return folderPath;
 	} else {
 	  vscode.window.showErrorMessage('No open C++ file in the active editor.');
@@ -184,7 +141,7 @@ async function findFolderPath(shellPath){
 const makeSampleInputArray=async (url)=>{
 	
 	let sampleInputArray=[];
-	console.log("hello");
+	//console.log("hello");
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 	await page.goto(url);

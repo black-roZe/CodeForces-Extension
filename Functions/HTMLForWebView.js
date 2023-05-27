@@ -1,8 +1,8 @@
 const fetchProblem=require('./getQuestion');
 
-const makeWebView=async (url)=>{
+const makeWebView=async (html)=>{
 
-	let data=await fetchProblem.fetchProblemStatement(url);
+	//let data=await fetchProblem.fetchProblemStatement(url);
 
 	return `<!DOCTYPE html>
 	<html lang="en">
@@ -13,7 +13,7 @@ const makeWebView=async (url)=>{
 		<link href="" rel="stylesheet">
 		<style>
 		*{
-			font-size:16px;
+			font-size:18px;
 		}
 		.header{
             font-size: 10px;
@@ -27,30 +27,31 @@ const makeWebView=async (url)=>{
 			margin-bottom:4px;
 		}
 		.time-limit{
-            font-family: monospace;
+            
 			margin-top:4px;
 			margin-bottom:4px;
 		}
 		.memory-limit{
-            font-family: monospace;
+            
 			margin-top:4px;
 			margin-bottom:4px;
 		}
 		.input-type{
-            font-family: monospace;
+            
             margin-top:4px;
 			margin-bottom:4px;
 		}
 		.output-type{
-            font-family: monospace;
+            
 			margin-top:4px;
 			margin-bottom:4px;
 		}
+		
 		</style>
 		<title>Cat Coding</title>
 	</head>
 		<body>
-			${data}
+			${html}
 			<script defer src=""></script>
 		</body>
 	</html>`

@@ -26,16 +26,16 @@
         "title": "getData"
       },
       {
-        "command":"codeforces-extension.showWebview",
+        "command": "codeforces-extension.showWebview",
         "title": "webview"
       },
       {
-        "command":"codeforces-extension.makeTerminal",
+        "command": "codeforces-extension.makeTerminal",
         "title": "terminal"
       },
       {
-        "command":"codeforces-extension.sampleTests",
-        "title":"sampleTests"
+        "command": "codeforces-extension.sampleTests",
+        "title": "sampleTests"
       }
     ]
   },
@@ -56,6 +56,6 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "puppeteer": "^19.8.5"
+    "puppeteer": "^19.9.1"
   }
 }
