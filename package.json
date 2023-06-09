@@ -1,10 +1,10 @@
 {
-  "name": "codeforces-extension",
-  "displayName": "CodeForces-Extension",
-  "description": "testing out first codeforces extension",
+  "name": "codeforces-helper",
+  "displayName": "Codeforces-Helper",
+  "description": "Integrates major functionalities of codeforces to your vscode!",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.77.0"
+    "vscode": "^1.78.0"
   },
   "categories": [
     "Other"
@@ -13,6 +13,10 @@
   "main": "./extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "codeforces-helper.start",
+        "title": "start"
+      },
       {
         "command": "codeforces-extension.helloWorld",
         "title": "wow"
@@ -27,7 +31,11 @@
       },
       {
         "command": "codeforces-extension.showWebview",
-        "title": "webview"
+        "title": "webview",
+        "icon":{
+          "light":"resources/icons8-right-24.png",
+          "dark":"resources/icons8-right-arrow-24.png"
+        }
       },
       {
         "command": "codeforces-extension.makeTerminal",
@@ -36,8 +44,51 @@
       {
         "command": "codeforces-extension.sampleTests",
         "title": "sampleTests"
+      },
+      {
+        "command":"codeforces-extension.treeWebView",
+        "title": "webViewFromTreeVIew",
+        "icon":{
+          "light":"resources/icons8-right-24.png",
+          "dark":"resources/icons8-right-arrow-24.png"
+        }
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeforces-helper",
+          "title": "Codeforces Helper",
+          "icon": "resources/codeforces.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeforces-helper": [
+        {
+          "id": "search",
+          "name": "Search with URL or porblem number"
+        },
+        {
+          "id": "tags",
+          "name": "Search with tags"
+        }
+      ]
+    },
+    "menus":{
+      "view/item/context":[
+      {
+        "command": "codeforces-extension.treeWebView",
+        "when": "true && view==tags",
+        "group":"inline"
+      },
+      {
+        "command": "codeforces-extension.showWebview",
+        "when": "true && view==search",
+        "group":"inline"
       }
     ]
+  }
   },
   "scripts": {
     "lint": "eslint .",
@@ -48,7 +99,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
-    "@types/vscode": "^1.77.0",
+    "@types/vscode": "^1.78.0",
     "@vscode/test-electron": "^2.3.0",
     "eslint": "^8.36.0",
     "glob": "^8.1.0",
@@ -56,6 +107,8 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "axios": "^1.4.0",
+    "node-fetch": "^3.3.1",
     "puppeteer": "^19.9.1"
   }
 }
